@@ -1,10 +1,13 @@
 import express from "express";
 import { chats } from "./data/chats.js";
 import dotenv from "dotenv";
+import cors from "cors";
 
 const app = express();
 
 dotenv.config();
+
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.json({ msg: "Welcome to Nexus API" });
