@@ -30,4 +30,4 @@ const chatSchema = new mongoose.Schema({
 
 const Chats = mongoose.model("chat", chatSchema);
 
-export { chatSchema, Chats };
+export default Chats;

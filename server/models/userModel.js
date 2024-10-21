@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter a password"],
       minLength: 4,
-      maxLength: 20,
     },
     avatar: {
       type: String,
@@ -37,4 +36,4 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("user", userSchema);
 
-export { User, userSchema };
+export default User;
