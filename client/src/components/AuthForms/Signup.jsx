@@ -1,30 +1,59 @@
 import React from "react";
 import { Input, Field, Label, Button } from "@headlessui/react";
 import { useState } from "react";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 const Signup = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [picture, setPicture] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const [isNotify, setIsNotify] = useState(false);
 
-    console.log("signing you up...");
+  const notify = (msg) => {
+    toast(msg);
   };
 
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+
+      console.log(username, email, password, confirmPassword, picture);
+
+      if (password !== confirmPassword) {
+        notify("❌Passwords do not match. Please try again.");
+      }
+
+      const userData = {
+        name: username,
+        email,
+        password,
+        picture,
+      };
+
+      const response = await axios.post(
+        "http://localhost:8080/api/user/register",
+        userData
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log("Error : ", error.message);
+    }
+  };
   return (
     <div className="w-full">
+      <Toaster />
       <form onSubmit={handleSubmit}>
         <Field className="flex flex-col w-full">
           <Label>Name</Label>
           <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             className="p-2 border w-full"
             name="name"

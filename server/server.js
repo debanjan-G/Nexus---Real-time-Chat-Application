@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import errorHandler from "./middlewares/errorMiddleware.js";
 
 const app = express();
 
@@ -31,6 +32,8 @@ app.get("/api/chats/:chatID", (req, res) => {
 
   res.send(requiredChat);
 });
+
+app.use(errorHandler); //error-handling middleware
 
 const PORT = process.env.PORT || 8080;
 

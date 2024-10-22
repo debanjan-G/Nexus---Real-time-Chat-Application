@@ -1,14 +1,42 @@
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import generateToken from "../config/generateToken.js";
 
-const loginUser = () => {};
+const loginUser = expressAsyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new Error("Please provide valid Email and Password.");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("email not registered");
+  }
+
+  //verify password
+  const isMatched = await bcrypt.compare(password, user.password);
+
+  if (!isMatched) {
+    throw new Error("Incorrect Password");
+  }
+
+  // return token
+  res.status(200).json({
+    success: true,
+    user: {
+      name: user.username,
+      email: user.email,
+      avatar: user.avatar,
+    },
+    token: generateToken({ email }),
+  });
+});
 
 const registerUser = expressAsyncHandler(async (req, res) => {
-  console.log(req.body);
-
   const { name, email, password, picture } = req.body;
 
   if (!name || !email || !password) {
@@ -34,7 +62,11 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 
   res.status(201).json({
     msg: "User created successfully",
-    newUser,
+    user: {
+      name: newUser.username,
+      email: newUser.email,
+      avatar: newUser.avatar,
+    },
     token: generateToken({ name, email }),
   });
 });
