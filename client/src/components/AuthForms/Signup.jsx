@@ -3,37 +3,71 @@ import { Input, Field, Label, Button } from "@headlessui/react";
 import { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+// import Spinner from "../ui/Spinner";
+import Spinner from "../ui/Spinner";
 
 const Signup = () => {
+  // signup form states
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [picture, setPicture] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  // const [isNotify, setIsNotify] = useState(false);
+  // image uploading states
+  const [loading, setLoading] = useState(false);
+  const [picture, setPicture] = useState("");
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const notify = (msg) => {
     toast(msg);
   };
 
+  const uploadImage = async () => {
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("file", picture);
+    formData.append("upload_preset", "Nexus -  Chat Application");
+
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/doi1vdkhc/image/upload",
+        formData
+      );
+      // console.log("Cloudinary POST request response: ", response.data);
+
+      setUploadedImageUrl(response.data.secure_url); // Get the URL of the uploaded image
+      console.log("Uploaded image URL:", response.data.secure_url);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     try {
+      setLoading(true);
       e.preventDefault();
 
-      console.log(username, email, password, confirmPassword, picture);
+      // console.log(username, email, password, confirmPassword, picture);
 
       if (password !== confirmPassword) {
-        notify("❌Passwords do not match. Please try again.");
+        notify("Passwords do not match. Please try again❌");
+        return;
       }
+
+      if (picture) await uploadImage();
+
+      // console.log("image state before submitting the form: ", uploadedImageUrl);
 
       const userData = {
         name: username,
         email,
         password,
-        picture,
+        picture: uploadedImageUrl,
       };
 
       const response = await axios.post(
@@ -41,13 +75,22 @@ const Signup = () => {
         userData
       );
       console.log(response.data);
+      localStorage.setItem("token", response.data.token);
     } catch (error) {
       console.log("Error : ", error.message);
+    } finally {
+      setLoading(false);
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setPicture("");
     }
   };
   return (
     <div className="w-full">
       <Toaster />
+      {/* <Spinner /> */}
       <form onSubmit={handleSubmit}>
         <Field className="flex flex-col w-full">
           <Label>Name</Label>
@@ -130,9 +173,11 @@ const Signup = () => {
 
         <Button
           type="submit"
-          className="rounded bg-sky-600 py-2 px-4 text-sm text-white data-[hover]:bg-sky-500 data-[active]:bg-sky-700 w-full my-2 text-md font-semibold"
+          className="rounded bg-sky-600 py-2 px-4 text-sm text-white data-[hover]:bg-sky-500 data-[active]:bg-sky-700 w-full my-2 text-md font-semibold text-center"
         >
-          Signup
+          {loading ? <Spinner /> : "Signup"}
+
+          {/* <Spinner /> */}
         </Button>
       </form>
     </div>

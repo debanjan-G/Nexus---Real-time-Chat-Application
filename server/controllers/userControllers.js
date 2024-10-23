@@ -38,6 +38,9 @@ const loginUser = expressAsyncHandler(async (req, res) => {
 
 const registerUser = expressAsyncHandler(async (req, res) => {
   const { name, email, password, picture } = req.body;
+  console.log(req.body);
+
+  console.log("received picture on server-side: ", picture);
 
   if (!name || !email || !password) {
     throw new Error("Please provide all fields!");
@@ -56,7 +59,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
     username: name,
     email,
     password: hashedPassword,
-    picture,
+    avatar: picture,
   });
   await newUser.save();
 

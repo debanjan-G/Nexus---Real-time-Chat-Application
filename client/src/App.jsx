@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Chats from "./components/Chats";
 import AuthPage from "./components/AuthPage";
+import "./App.css";
 
 const App = () => {
   return (

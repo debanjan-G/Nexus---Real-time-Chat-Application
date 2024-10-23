@@ -1,25 +1,54 @@
 import React from "react";
 import { Input, Field, Label, Button } from "@headlessui/react";
+import axios from "axios";
 import { useState } from "react";
+import Spinner from "../ui/Spinner";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const notify = (msg) => {
+    toast(msg);
+  };
+
+  const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
+
+    const loginData = {
+      email,
+      password,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/user/login",
+        loginData
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.log("ERROR: ", error);
+    } finally {
+      setLoading(false);
+      notify("Login Successful✅");
+    }
 
     console.log("Logging you in...");
   };
 
-  const useGuestCredentials = () => {
+  const setGuestCredentials = () => {
     setEmail("guest@email.com");
     setPassword("secret1010");
   };
 
   return (
     <div className="w-full">
+      <Toaster />
       <form onSubmit={handleSubmit}>
         <Field className="flex flex-col w-full">
           <Label>Email Address</Label>
@@ -58,11 +87,11 @@ const Login = () => {
           type="submit"
           className="rounded bg-sky-600 py-2 px-4 text-sm text-white data-[hover]:bg-sky-500 data-[active]:bg-sky-700 w-full my-2 text-md font-semibold"
         >
-          Login
+          {loading ? <Spinner /> : "Login"}
         </Button>
         <Button
-          type="submit"
-          onClick={useGuestCredentials}
+          type="button"
+          onClick={setGuestCredentials}
           className="rounded bg-green-500 py-2 px-4 text-white data-[hover]:bg-green-400 data-[active]:bg-green-700 w-full text-md font-semibold"
         >
           Get Guest User Credentials
