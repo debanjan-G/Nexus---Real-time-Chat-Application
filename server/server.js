@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors());
 connectDB();
 
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.get("/", (req, res) => {
   res.json({ msg: "Welcome to Nexus API" });
