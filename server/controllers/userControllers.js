@@ -32,7 +32,7 @@ const loginUser = expressAsyncHandler(async (req, res) => {
       email: user.email,
       avatar: user.avatar,
     },
-    token: generateToken({ email }),
+    token: generateToken({ id: user._id, email }),
   });
 });
 
@@ -70,8 +70,43 @@ const registerUser = expressAsyncHandler(async (req, res) => {
       email: newUser.email,
       avatar: newUser.avatar,
     },
-    token: generateToken({ name, email }),
+    token: generateToken({ id: newUser._id, name, email }),
   });
 });
 
-export { registerUser, loginUser };
+// /api/user?search=Debanjan
+// controller to get all users (except the connected client's account)
+const getUser = expressAsyncHandler(async (req, res) => {
+  // Construct the search keyword based on the query parameter
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { username: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  // This query will select all documents in the collection where either the username field or the email field matches the query parameter.
+
+  // Find users based on the keyword and exclude the current user
+  const searchedUsers = await User.find({ ...keyword }).find({
+    _id: {
+      $ne: req.user._id,
+    },
+  });
+
+  // Check if no users are found
+  if (!searchedUsers.length) {
+    return res.status(404).json({ success: false, msg: "No users found" });
+  }
+
+  // Return the found users
+  res.status(200).json({
+    success: true,
+    userCount: searchedUsers.length,
+    users: searchedUsers,
+  });
+});
+
+export { registerUser, loginUser, getUser };
