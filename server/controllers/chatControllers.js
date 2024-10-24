@@ -146,4 +146,57 @@ const renameGroupChat = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export { accessChat, fetchChats, createGroupChat, renameGroupChat };
+const addPeopleToGroup = expressAsyncHandler(async (req, res) => {
+  const { usersToAdd, groupChatID } = req.body;
+  console.log(req.body);
+
+  if (!groupChatID) {
+    res
+      .status(400)
+      .json({ success: false, message: "No Group Chat ID was provided!" });
+  }
+
+  if (!usersToAdd || usersToAdd.length === 0) {
+    res
+      .status(400)
+      .json({ success: false, message: "No user IDs were provided!" });
+  }
+
+  const currentGroupChat = await Chat.findById(groupChatID);
+  if (!currentGroupChat) {
+    res.status(404).json({ success: false, message: "Group Chat Not Found!" });
+  }
+
+  // const updatedUsersArray = currentGroupChat.users.push(...usersToAdd);
+  const updatedUsersArray = [
+    ...new Set([...currentGroupChat.users, ...usersToAdd]),
+  ]; // Prevent duplicates
+
+  const updatedGroupChat = await Chat.findByIdAndUpdate(
+    groupChatID,
+    {
+      users: updatedUsersArray,
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  console.log(updatedGroupChat);
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      userCount: updatedGroupChat.length,
+      updatedGroupChat,
+    });
+});
+
+export {
+  accessChat,
+  fetchChats,
+  createGroupChat,
+  renameGroupChat,
+  addPeopleToGroup,
+};
