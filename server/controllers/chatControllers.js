@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import Chat from "../models/chatModel.js";
 import User from "../models/userModel.js";
+import Message from "../models/messageModel.js";
 
 //@description     Create or fetch One to One Chat
 //@route           POST /api/chat/
@@ -68,4 +69,39 @@ const fetchChats = expressAsyncHandler(async (req, res) => {
   }
 });
 
-export { accessChat, fetchChats };
+const createGroupChat = expressAsyncHandler(async (req, res) => {
+  const { users, chatName } = req.body;
+
+  if (!users) {
+    res.status(400);
+    throw new Error("users array not provided!");
+  }
+
+  users.push(req.user); // adding the current user to the users array
+  if (users.length < 3) {
+    res.status(400);
+    throw new Error("More than 2 users are needed for group chat!");
+  }
+
+  if (!chatName) {
+    res.status(400);
+    throw new Error("Group Chat Name not provided!");
+  }
+
+  const newGroupChat = new Chat({
+    isGroupChat: true,
+    users,
+    groupAdmin: req.user._id, // the current user is the groupAdmin
+    chatName,
+  });
+
+  const groupChat = await newGroupChat.save();
+
+  let createdGroupChat = await Chat.findById(groupChat._id)
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  res.status(201).json({ success: true, createdGroupChat });
+});
+
+export { accessChat, fetchChats, createGroupChat };
