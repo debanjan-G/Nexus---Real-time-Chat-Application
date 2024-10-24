@@ -184,13 +184,47 @@ const addPeopleToGroup = expressAsyncHandler(async (req, res) => {
 
   console.log(updatedGroupChat);
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      userCount: updatedGroupChat.length,
-      updatedGroupChat,
-    });
+  res.status(200).json({
+    success: true,
+    userCount: updatedGroupChat.length,
+    updatedGroupChat,
+  });
+});
+
+const removePeopleFromGroup = expressAsyncHandler(async (req, res) => {
+  const { userID, groupChatID } = req.body;
+
+  if (!userID) {
+    res
+      .status(400)
+      .json({ success: false, message: "No User ID was provided!" });
+  }
+
+  if (!groupChatID) {
+    res
+      .status(400)
+      .json({ success: false, message: "No Group Chat ID was provided!" });
+  }
+
+  const updatedGroupChat = await Chat.findByIdAndUpdate(
+    groupChatID,
+    {
+      $pull: { users: userID }, // Remove userID from the users array
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!updatedGroupChat) {
+    res.status(404).json({ success: false, message: "Chat Not Found!" });
+  }
+
+  res.status(200).json({
+    success: true,
+    membersCount: updatedGroupChat.users.length,
+    updatedGroupChat,
+  });
 });
 
 export {
@@ -199,4 +233,5 @@ export {
   createGroupChat,
   renameGroupChat,
   addPeopleToGroup,
+  removePeopleFromGroup,
 };
