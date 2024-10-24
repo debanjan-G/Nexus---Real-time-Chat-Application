@@ -1,8 +1,20 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import Login from "./AuthForms/Login";
 import Signup from "./AuthForms/Signup";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
+  const navigate = useNavigate();
+  // if user is logged in, redirect him to chats page
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (userInfo) {
+      navigate("/chats");
+    }
+  }, []);
+
   return (
     <div className="bg-[url(chat-app-bg.jpg)] bg-cover bg-center h-screen w-full p-8">
       <div className=" p-4 rounded-md flex items-center justify-center bg-white w-1/3 mx-auto">

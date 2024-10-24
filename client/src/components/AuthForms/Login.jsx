@@ -4,12 +4,14 @@ import axios from "axios";
 import { useState } from "react";
 import Spinner from "../ui/Spinner";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const notify = (msg) => {
     toast(msg);
@@ -31,10 +33,14 @@ const Login = () => {
       );
 
       console.log(response.data);
+
+      //saving current user details to localStorage
+      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
     } catch (error) {
       console.log("ERROR: ", error);
     } finally {
       setLoading(false);
+      navigate("/chats");
       notify("Login Successful✅");
     }
 
