@@ -73,19 +73,23 @@ const createGroupChat = expressAsyncHandler(async (req, res) => {
   const { users, chatName } = req.body;
 
   if (!users) {
-    res.status(400);
-    throw new Error("users array not provided!");
+    res
+      .status(400)
+      .json({ success: false, message: "users array not provided!" });
   }
 
   users.push(req.user); // adding the current user to the users array
   if (users.length < 3) {
-    res.status(400);
-    throw new Error("More than 2 users are needed for group chat!");
+    res.status(400).json({
+      success: false,
+      message: "More than 2 users are needed for group chat!",
+    });
   }
 
   if (!chatName) {
-    res.status(400);
-    throw new Error("Group Chat Name not provided!");
+    res
+      .status(400)
+      .json({ success: false, message: "Group Chat Name not provided!" });
   }
 
   const newGroupChat = new Chat({
