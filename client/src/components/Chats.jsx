@@ -27,7 +27,7 @@ const Chats = () => {
       <ChatPageHeader user={user} setOpen={setOpen} />
       <ChatSidebar open={open} setOpen={setOpen} />
       <div className="flex justify-between p-4 w-full">
-        <MyChats />
+        <MyChats user={user} />
         <ChatBox />
       </div>
     </div>

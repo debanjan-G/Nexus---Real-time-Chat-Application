@@ -28,6 +28,7 @@ const loginUser = expressAsyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     user: {
+      id: user._id,
       name: user.username,
       email: user.email,
       avatar: user.avatar,
