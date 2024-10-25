@@ -12,6 +12,8 @@ import {
 import { useState } from "react";
 import SearchResultBox from "../misc/SearchResultBox";
 import Avatar from "../misc/Avatar";
+import DropdownMenu from "../misc/DropdownMenu";
+import ProfileModal from "../misc/ProfileModal";
 
 const users = [
   {
@@ -54,6 +56,7 @@ const users = [
 const ChatPageHeader = ({ user }) => {
   const [selectedPerson, setSelectedPerson] = useState("Search User");
   const [query, setQuery] = useState("");
+  const [showModal, setShowModal] = React.useState(false);
 
   const filteredPeople =
     query === ""
@@ -79,7 +82,7 @@ const ChatPageHeader = ({ user }) => {
           />
           <ComboboxOptions
             anchor="bottom"
-            className="w-1/4 border empty:invisible p-2 opacity-100"
+            className="bg-white w-1/4 border empty:invisible p-2 opacity-100"
           >
             {filteredPeople.map((person) => (
               <ComboboxOption
@@ -100,14 +103,16 @@ const ChatPageHeader = ({ user }) => {
       <h1 className=" text-4xl font-light">Nexus</h1>
       <div className=" flex items-center justify-around gap-4 ">
         <IoIosNotifications className=" size-6" />
-        <div className="flex items-center hover:bg-slate-100 transition duration-200 hover:cursor-pointer">
+        <div className="flex items-center hover:cursor-pointer">
           <Avatar name={user.name} image={user.avatar} />
-          {/* <img
-            className=" object-contain h-10"
-            src={user.avatar}
-            alt="avatar"
-          /> */}
-          <IoMdArrowDropdown />
+          <DropdownMenu setShowModal={setShowModal} />
+          <ProfileModal
+            username={user.name}
+            userEmail={user.email}
+            userPic={user.avatar}
+            showModal={showModal}
+            setShowModal={setShowModal}
+          />
         </div>
       </div>
     </div>
