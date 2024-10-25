@@ -14,6 +14,7 @@ import SearchResultBox from "../misc/SearchResultBox";
 import Spinner from "../Spinner";
 import { Toaster, toast } from "react-hot-toast";
 import SkeletonLoader from "../SkeletonLoader";
+import { ChatState } from "../../context/ChatProvider";
 
 const users = [
   {
@@ -58,9 +59,16 @@ export default function ChatSidebar({ open, setOpen }) {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { setCurrentChat, setChats } = ChatState();
 
   const notify = (msg) => {
     toast(msg);
+  };
+
+  const closeSideBar = () => {
+    setOpen(false);
+    setQuery("");
+    setSelectedPerson(null);
   };
 
   const searchUsers = async () => {
@@ -89,10 +97,7 @@ export default function ChatSidebar({ open, setOpen }) {
   };
 
   const accessChat = async (person) => {
-    // console.log(person);
-
     setSelectedPerson(person);
-
     console.log("Creating new chat");
 
     try {
@@ -103,28 +108,26 @@ export default function ChatSidebar({ open, setOpen }) {
         },
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-
       console.log(response.data);
+
+      // update context
+      setCurrentChat(response.data);
+      setChats((prev) => [...prev, response.data]);
     } catch (error) {
       notify("Could not create chat! Try again later.");
       console.log("ERROR: ", error);
+    } finally {
+      closeSideBar();
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => {
-        setOpen(false);
-        setQuery("");
-        setSelectedPerson(null);
-      }}
-      className="relative z-10"
-    >
+    <Dialog open={open} onClose={closeSideBar} className="relative z-10">
       <Toaster />
       <DialogBackdrop
         transition

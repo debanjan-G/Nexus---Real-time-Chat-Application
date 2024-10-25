@@ -6,6 +6,8 @@ const chatContext = createContext(); // this will hold the data that we wanna sh
 // ChatProvider is a wrapper component that wraps its children within the ContextProvider component so that every children can access the context.
 const ChatProvider = ({ children }) => {
   const [user, setUser] = useState("");
+  const [currentChat, setCurrentChat] = useState("");
+  const [chats, setChats] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +23,9 @@ const ChatProvider = ({ children }) => {
   }, [navigate]);
 
   return (
-    <chatContext.Provider value={{ user, setUser }}>
+    <chatContext.Provider
+      value={{ user, setUser, currentChat, setCurrentChat, chats, setChats }}
+    >
       {children}
     </chatContext.Provider>
   );
