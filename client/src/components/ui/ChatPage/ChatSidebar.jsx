@@ -88,6 +88,33 @@ export default function ChatSidebar({ open, setOpen }) {
     }
   };
 
+  const accessChat = async (person) => {
+    // console.log(person);
+
+    setSelectedPerson(person);
+
+    console.log("Creating new chat");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/chat/",
+        {
+          userId: person._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      notify("Could not create chat! Try again later.");
+      console.log("ERROR: ", error);
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -153,11 +180,12 @@ export default function ChatSidebar({ open, setOpen }) {
                     <div className="mt-2 max-h-60 ">
                       {searchedUsers?.map((person) => (
                         <SearchResultBox
+                          person={person}
                           key={person.email}
                           name={person.username}
                           email={person.email}
                           avatar={person.avatar}
-                          onClick={() => setSelectedPerson(person)}
+                          accessChat={accessChat}
                         />
                       ))}
                     </div>
