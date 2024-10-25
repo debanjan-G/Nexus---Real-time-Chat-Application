@@ -11,14 +11,14 @@ const ChatProvider = ({ children }) => {
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-    console.log(userInfo);
+    console.log("userInfo = ", userInfo);
 
     if (!userInfo) {
       navigate("/");
     } else {
       setUser(userInfo);
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <chatContext.Provider value={{ user, setUser }}>

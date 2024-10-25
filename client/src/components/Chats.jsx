@@ -1,19 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ChatState } from "./context/ChatProvider";
 import ChatPageHeader from "./ui/ChatPage/ChatPageHeader";
 import ChatSidebar from "./ui/ChatPage/ChatSidebar";
 import ChatBox from "./ui/ChatPage/ChatBox";
 import MyChats from "./ui/ChatPage/MyChats";
+import toast, { Toaster } from "react-hot-toast";
 
 const Chats = () => {
   const { user, setUser } = ChatState();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const showLoginSuccess = localStorage.getItem("showLoginSuccess");
+
+    if (showLoginSuccess) {
+      toast.success("Login Successful✅");
+      localStorage.removeItem("showLoginSuccess");
+    }
+  }, []);
 
   console.log(user);
 
   return (
     <div className="bg-[url(chat-app-bg.jpg)] h-screen">
-      <ChatPageHeader user={user} />
-      <ChatSidebar />
+      <Toaster />
+      <ChatPageHeader user={user} setOpen={setOpen} />
+      <ChatSidebar open={open} setOpen={setOpen} />
       <div className="flex justify-between p-4 w-full">
         <MyChats />
         <ChatBox />

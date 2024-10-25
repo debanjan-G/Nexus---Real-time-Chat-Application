@@ -1,14 +1,15 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-// import {
-//   ArchiveBoxXMarkIcon,
-//   ChevronDownIcon,
-//   PencilIcon,
-//   Square2StackIcon,
-//   TrashIcon,
-// } from "@heroicons/react/16/solid";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 export default function DropdownMenu({ setShowModal }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    navigate("/");
+  };
+
   return (
     // <div className=" w-52 text-right">
     <Menu __demoMode>
@@ -33,7 +34,10 @@ export default function DropdownMenu({ setShowModal }) {
           </button>
         </MenuItem>
         <MenuItem>
-          <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-black/10">
+          <button
+            className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-black/10"
+            onClick={handleLogout}
+          >
             {/* <Square2StackIcon className="size-4 fill-white/30" /> */}
             Logout
           </button>

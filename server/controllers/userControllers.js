@@ -77,6 +77,8 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 // /api/user?search=Debanjan
 // controller to get all users (except the connected client's account)
 const getUser = expressAsyncHandler(async (req, res) => {
+  // console.log(req.query);
+
   // Construct the search keyword based on the query parameter
   const keyword = req.query.search
     ? {
@@ -90,11 +92,13 @@ const getUser = expressAsyncHandler(async (req, res) => {
   // This query will select all documents in the collection where either the username field or the email field matches the query parameter.
 
   // Find users based on the keyword and exclude the current user
-  const searchedUsers = await User.find({ ...keyword }).find({
-    _id: {
-      $ne: req.user._id,
-    },
-  });
+  const searchedUsers = await User.find({ ...keyword })
+    .find({
+      _id: {
+        $ne: req.user._id,
+      },
+    })
+    .select("-password");
 
   // Check if no users are found
   if (!searchedUsers.length) {

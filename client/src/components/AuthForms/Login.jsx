@@ -3,8 +3,8 @@ import { Input, Field, Label, Button } from "@headlessui/react";
 import axios from "axios";
 import { useState } from "react";
 import Spinner from "../ui/Spinner";
-import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,14 +34,19 @@ const Login = () => {
 
       console.log(response.data);
 
+      localStorage.setItem("token", response.data.token);
+
+      localStorage.setItem("showLoginSuccess", "true");
+      // console.log(response.data);
+
       //saving current user details to localStorage
       localStorage.setItem("userInfo", JSON.stringify(response.data.user));
     } catch (error) {
       console.log("ERROR: ", error);
     } finally {
       setLoading(false);
+      // setTimeout(() => navigate("/chats"), 1000);
       navigate("/chats");
-      notify("Login Successful✅");
     }
 
     console.log("Logging you in...");
@@ -54,7 +59,6 @@ const Login = () => {
 
   return (
     <div className="w-full">
-      <Toaster />
       <form onSubmit={handleSubmit}>
         <Field className="flex flex-col w-full">
           <Label>Email Address</Label>

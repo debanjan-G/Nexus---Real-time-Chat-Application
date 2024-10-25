@@ -12,7 +12,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   border: 4px solid;
-  border-color: #ffffff #f0e6e600;
+  border-color: #fd0404 #f0e6e600;
   animation: l1 1s infinite;
 }
 @keyframes l1 {to{transform: rotate(.5turn)}}
