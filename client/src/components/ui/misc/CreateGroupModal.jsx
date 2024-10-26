@@ -36,10 +36,39 @@ export default function CreateGroupModal({ open, setOpen }) {
   };
 
   // Function to create the group chat
-  const createGroupChat = (e) => {
+  const createGroupChat = async (e) => {
+    e.preventDefault();
     console.log("Creating group chat...");
 
-    e.preventDefault();
+    if (groupMembers.length < 2) {
+      notify("Atleast 3 users are needed to create a group");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/chat/group",
+        {
+          users: groupMembers.map((member) => member._id),
+          chatName: groupName,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      setChats((prev) => [response.data.createdGroupChat, ...prev]);
+    } catch (error) {
+      console.log("Error: ", error);
+      notify("Group Chat creation unsuccessful❌");
+    } finally {
+      setOpen(false);
+      notify("Group Chat created successfully✅");
+    }
   };
 
   // Function that searches for a user
@@ -168,7 +197,7 @@ export default function CreateGroupModal({ open, setOpen }) {
                 </button>
                 <button
                   type="submit"
-                  onClick={() => setOpen(false)}
+                  // onClick={() => setOpen(false)}
                   className="inline-flex w-full justify-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 sm:ml-3 sm:w-auto"
                 >
                   Create Group Chat

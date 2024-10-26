@@ -34,6 +34,8 @@ const MyChats = ({ user }) => {
           },
         });
 
+        console.log("Fetched chats: ", response.data);
+
         setChats(response.data.chats);
 
         console.log("Chats = ", response.data);
@@ -81,9 +83,12 @@ const MyChats = ({ user }) => {
           <ChatCard
             chat={chat}
             fetchChat={fetchChat}
-            // latestMessage={chat.latestMessage || null}
-            isSelected={selectedChat._id === chat._id}
-            otherUser={chat.users.find((user) => user._id != loggedUser.id)}
+            isSelected={selectedChat?._id === chat._id}
+            chatName={
+              chat.isGroupChat
+                ? chat.chatName
+                : chat.users.find((user) => user._id !== loggedUser.id).username
+            }
             latestMessage={`Latest Message ${index + 1}`}
           />
         </div>
