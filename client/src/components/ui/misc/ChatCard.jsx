@@ -1,13 +1,18 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
+import axios from "axios";
+import { ChatState } from "../../context/ChatProvider";
 
-const ChatCard = ({ otherUser, latestMessage, isSelected }) => {
-  //   console.log("OtherUser = ", otherUser);
-
-  console.log(isSelected);
-
+const ChatCard = ({
+  otherUser,
+  latestMessage,
+  isSelected,
+  fetchChat,
+  chat,
+}) => {
   return (
     <div
+      onClick={() => fetchChat(otherUser, chat)}
       className={`py-2 px-4 rounded-md 
     ${
       isSelected ? "bg-green-500 text-white" : "bg-slate-300 text-slate-800"

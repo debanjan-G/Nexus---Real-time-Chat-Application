@@ -19,14 +19,12 @@ const Chats = () => {
     }
   }, []);
 
-  console.log(user);
-
   return (
     <div className="bg-[url(chat-app-bg.jpg)] h-screen">
       <Toaster />
       <ChatPageHeader user={user} setOpen={setOpen} />
       <ChatSidebar open={open} setOpen={setOpen} />
-      <div className="flex justify-between p-4 w-full">
+      <div className="flex h-[85vh] gap-4 justify-between p-4 w-full">
         <MyChats user={user} />
         <ChatBox />
       </div>

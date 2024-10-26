@@ -16,44 +16,6 @@ import { Toaster, toast } from "react-hot-toast";
 import SkeletonLoader from "../SkeletonLoader";
 import { ChatState } from "../../context/ChatProvider";
 
-const users = [
-  {
-    id: 1,
-    name: "Durward Reynolds",
-    email: "durward@example.com",
-    avatar:
-      "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png",
-  },
-  {
-    id: 2,
-    name: "Kenton Towne",
-    email: "kenton@example.com",
-    avatar:
-      "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png",
-  },
-  {
-    id: 3,
-    name: "Therese Wunsch",
-    email: "therese@example.com",
-    avatar:
-      "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png",
-  },
-  {
-    id: 4,
-    name: "Benedict Kessler",
-    email: "benedict@example.com",
-    avatar:
-      "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png",
-  },
-  {
-    id: 5,
-    name: "Katelyn Rohan",
-    email: "katelyn@example.com",
-    avatar:
-      "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png",
-  },
-];
-
 export default function ChatSidebar({ open, setOpen }) {
   const [query, setQuery] = useState("");
   const [selectedPerson, setSelectedPerson] = useState(null);

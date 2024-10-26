@@ -17,7 +17,6 @@ export default function DropdownMenu({ setShowModal }) {
     <Menu>
       <MenuButton
         onClick={() => {
-          console.log("dropdown btn clicked!");
           setShowDropdown((prev) => !prev);
         }}
         className="inline-flex items-center gap-2 rounded-full py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-200 data-[open]:bg-gray-200 data-[focus]:outline-1 data-[focus]:outline-white"

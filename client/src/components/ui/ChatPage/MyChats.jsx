@@ -8,12 +8,14 @@ import { Button } from "@headlessui/react";
 import ChatCard from "../misc/ChatCard";
 import { IoAddOutline } from "react-icons/io5";
 import Spinner from "../Spinner";
+import CreateGroupModal from "../misc/CreateGroupModal";
 
 const MyChats = ({ user }) => {
   const { chats, setChats, currentChat, setCurrentChat } = ChatState();
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState();
   const [selectedChat, setSelectedChat] = useState("");
+  const [open, setOpen] = useState(false);
 
   const notify = (msg) => {
     toast(msg);
@@ -49,15 +51,30 @@ const MyChats = ({ user }) => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo"))); // saving the details of the currently logged user
   }, []);
 
+  const fetchChat = async (user, chat) => {
+    console.log(`Fetching chat with ${user.username}`);
+    console.log("selected chat = ", chat);
+
+    setCurrentChat(chat);
+  };
+
+  const showCreateGroupModal = () => {
+    setOpen(true);
+  };
+
   return (
     <div className="bg-white p-4 w-1/3 rounded-md overflow-y-scroll">
       <Toaster />
       <div className="flex gap-4 justify-between items-center">
         <h1 className="text-3xl font-light">My Chats</h1>
-        <Button className="flex items-center bg-blue-400 rounded-md text-white p-2">
+        <Button
+          onClick={showCreateGroupModal}
+          className="flex items-center bg-blue-400 rounded-md text-white p-2"
+        >
           New Group Chat
           <IoAddOutline className="text-2xl mx-2 inline" />
         </Button>
+        <CreateGroupModal open={open} setOpen={setOpen} />
       </div>
       {loading ? (
         <Spinner />
@@ -65,6 +82,8 @@ const MyChats = ({ user }) => {
         chats?.map((chat, index) => (
           <div onClick={() => setSelectedChat(chat)} className="" key={index}>
             <ChatCard
+              chat={chat}
+              fetchChat={fetchChat}
               // latestMessage={chat.latestMessage || null}
               isSelected={selectedChat._id === chat._id}
               otherUser={chat.users.find((user) => user._id != loggedUser.id)}
