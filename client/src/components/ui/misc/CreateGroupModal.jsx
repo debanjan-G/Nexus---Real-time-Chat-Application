@@ -13,6 +13,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { IoMdSearch } from "react-icons/io";
 import SearchResultBox from "./SearchResultBox";
+import Badge from "./Badge";
 
 export default function CreateGroupModal({ open, setOpen }) {
   // form data states
@@ -41,6 +42,7 @@ export default function CreateGroupModal({ open, setOpen }) {
     e.preventDefault();
   };
 
+  // Function that searches for a user
   const searchUsers = async () => {
     if (!query) return;
     try {
@@ -63,6 +65,23 @@ export default function CreateGroupModal({ open, setOpen }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const addPeopleToGroup = (person) => {
+    console.log("PERSON = ", person);
+    console.log("Group Members = ", groupMembers);
+
+    // dont add members already there in the groupMembers array
+    if (groupMembers.find((member) => member.email === person.email)) return;
+
+    setGroupMembers((prev) => [...prev, person]);
+  };
+
+  const removeBadge = (userEmail) => {
+    const updatedGroupMembers = groupMembers.filter(
+      (member) => member.email !== userEmail
+    );
+    setGroupMembers(updatedGroupMembers);
   };
 
   return (
@@ -120,10 +139,17 @@ export default function CreateGroupModal({ open, setOpen }) {
               {loading && <Spinner />}
 
               {/* Show selected group members */}
+              <div className="flex flex-wrap justify-center gap-2 mb-2">
+                {groupMembers?.map((member, index) => (
+                  <Badge key={index} user={member} removeBadge={removeBadge} />
+                ))}
+              </div>
+
               {/* Show results */}
               <div className=" max-h-[35vh] w-full overflow-y-scroll">
                 {searchResults?.map((result, index) => (
                   <SearchResultBox
+                    addPeopleToGroup={addPeopleToGroup}
                     //   addUserToGroup={setGroupMembers}
                     key={index}
                     person={result}

@@ -76,22 +76,18 @@ const MyChats = ({ user }) => {
         </Button>
         <CreateGroupModal open={open} setOpen={setOpen} />
       </div>
-      {loading ? (
-        <Spinner />
-      ) : (
-        chats?.map((chat, index) => (
-          <div onClick={() => setSelectedChat(chat)} className="" key={index}>
-            <ChatCard
-              chat={chat}
-              fetchChat={fetchChat}
-              // latestMessage={chat.latestMessage || null}
-              isSelected={selectedChat._id === chat._id}
-              otherUser={chat.users.find((user) => user._id != loggedUser.id)}
-              latestMessage={`Latest Message ${index + 1}`}
-            />
-          </div>
-        ))
-      )}
+      {chats?.map((chat, index) => (
+        <div onClick={() => setSelectedChat(chat)} className="" key={index}>
+          <ChatCard
+            chat={chat}
+            fetchChat={fetchChat}
+            // latestMessage={chat.latestMessage || null}
+            isSelected={selectedChat._id === chat._id}
+            otherUser={chat.users.find((user) => user._id != loggedUser.id)}
+            latestMessage={`Latest Message ${index + 1}`}
+          />
+        </div>
+      ))}
       {loading && <SkeletonLoader />}
     </div>
   );
