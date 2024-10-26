@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -14,6 +12,7 @@ import Spinner from "../Spinner";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { IoMdSearch } from "react-icons/io";
+import SearchResultBox from "./SearchResultBox";
 
 export default function CreateGroupModal({ open, setOpen }) {
   // form data states
@@ -57,7 +56,7 @@ export default function CreateGroupModal({ open, setOpen }) {
 
       console.log(response.data);
 
-      setSearchResults(response.data);
+      setSearchResults(response.data.users);
     } catch (error) {
       console.log("ERROR: ", error);
       notify("User Not Found❗");
@@ -119,6 +118,18 @@ export default function CreateGroupModal({ open, setOpen }) {
                 />
               </Field>
               {loading && <Spinner />}
+
+              {/* Show selected group members */}
+              {/* Show results */}
+              <div className=" max-h-[35vh] w-full overflow-y-scroll">
+                {searchResults?.map((result, index) => (
+                  <SearchResultBox
+                    //   addUserToGroup={setGroupMembers}
+                    key={index}
+                    person={result}
+                  />
+                ))}
+              </div>
 
               <div className=" px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-4">
                 <button

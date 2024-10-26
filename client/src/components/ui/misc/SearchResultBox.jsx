@@ -1,16 +1,21 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 
-const SearchResultBox = ({ person, name, email, avatar, accessChat }) => {
+const SearchResultBox = ({ person, accessChat }) => {
+  console.log("Received User = ", person);
+
+  // console.log(addUserToGroup);
+
   return (
     <div
-      onClick={() => accessChat(person)}
-      className="hover:cursor-pointer hover:bg-sky-200 bg-slate-200 p-2 flex items-center gap-4 my-2"
+      onClick={accessChat ? () => accessChat(person) : null}
+      className="w-full hover:cursor-pointer hover:bg-sky-200 bg-slate-200 p-2 flex items-center gap-4 my-2"
     >
-      <img src={avatar} alt="avatar" className="h-10" />
+      <img src={person.avatar} alt="avatar" className="h-10" />
       <div>
-        <p className="text-xl">{name}</p>
+        <p className="text-xl">{person.username}</p>
         <p className="text-sm">
-          <span className=" font-semibold">Email:</span> {email}
+          <span className="font-semibold">Email:</span> {person.email}
         </p>
       </div>
     </div>
