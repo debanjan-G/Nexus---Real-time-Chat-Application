@@ -2,10 +2,6 @@
 import React from "react";
 
 const SearchResultBox = ({ person, accessChat, addPeopleToGroup }) => {
-  // console.log("Received User = ", person);
-
-  // console.log(addUserToGroup);
-
   return (
     <div
       onClick={
