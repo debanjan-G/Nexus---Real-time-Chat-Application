@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   Dialog,
   DialogBackdrop,
   DialogPanel,
@@ -16,6 +17,7 @@ import SearchResultBox from "./SearchResultBox";
 const EditGroupModal = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user, currentChat, setCurrentChat } = ChatState();
+  const [newGroupName, setNewGroupName] = useState("");
 
   // Add people to group states
   const [query, setQuery] = useState("");
@@ -50,6 +52,9 @@ const EditGroupModal = ({ open, setOpen }) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    searchUsers();
+  }, [query]);
 
   // Function to remove users from group
   const removePeopleFromGroup = async (userID) => {
@@ -92,7 +97,6 @@ const EditGroupModal = ({ open, setOpen }) => {
       return;
     }
 
-    // if (user)
     try {
       setLoading(true);
       const response = await axios.put(
@@ -119,9 +123,34 @@ const EditGroupModal = ({ open, setOpen }) => {
     }
   };
 
-  useEffect(() => {
-    searchUsers();
-  }, [query]);
+  //Function to rename the group
+  const renameGroup = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        "http://localhost:8080/api/chat/rename-group",
+        {
+          newGroupName,
+          groupChatIdToUpdate: currentChat._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setCurrentChat(response.data.updatedGroupChat);
+      console.log(response.data);
+      notify("Group Name changed successfully✅");
+    } catch (error) {
+      console.log("ERROR: ", error);
+      notify("Operation Failed❌");
+    } finally {
+      setLoading(false);
+      setNewGroupName("");
+    }
+  };
 
   return (
     <Dialog
@@ -151,7 +180,10 @@ const EditGroupModal = ({ open, setOpen }) => {
             </div>
 
             {/* Show all users of the group */}
-            <div className="px-4 flex flex-wrap items-center justify-center gap-2">
+            <h1 className="text-xl my-2">
+              Members: {currentChat.users.length}
+            </h1>
+            <div className="px-4 flex flex-wrap items-center justify-center gap-2 mb-4">
               {currentChat?.users.map((user) => (
                 <Badge
                   key={user._id}
@@ -164,10 +196,26 @@ const EditGroupModal = ({ open, setOpen }) => {
 
             <Field className="w-full flex items-center gap-2">
               <Input
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                required
+                className="outline outline-slate-200 mx-2 my-2 block w-full rounded-lg border-none bg-slate-100 py-1.5 px-3 text-sm/6 text-slate-800 focus:outline-none"
+                placeholder="Rename Group"
+              />
+              <Button
+                onClick={renameGroup}
+                className="bg-green-500 text-white hover:bg-green-700 duration-200 rounded-md p-2"
+              >
+                Rename
+              </Button>
+            </Field>
+
+            <Field className="w-full flex items-center gap-2">
+              <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 required
-                className="outline outline-slate-200 mx-2 my-3 block w-full rounded-lg border-none bg-slate-100 py-1.5 px-3 text-sm/6 text-slate-800 focus:outline-none"
+                className="outline outline-slate-200 mx-2 my-2 block w-full rounded-lg border-none bg-slate-100 py-1.5 px-3 text-sm/6 text-slate-800 focus:outline-none"
                 placeholder="Add users (eg: Arthur, Kenny, Angela)"
               />
             </Field>

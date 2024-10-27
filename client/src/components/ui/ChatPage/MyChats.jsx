@@ -47,22 +47,13 @@ const MyChats = ({ user }) => {
         console.log("ERROR: ", error);
         notify("Oops! An error occured while fetching your chats.");
       } finally {
-        notify("Chats fetched successfully✅");
+        // notify("Chats fetched successfully✅");
         setLoading(false);
       }
     };
 
     fetchChats(); // fetching all chats of currently logged user
-
-    // setLoggedUser(user);
-  }, []);
-
-  // const fetchChat = async (user, chat) => {
-  //   console.log(`Fetching chat with ${user.username}`);
-  //   console.log("selected chat = ", chat);
-
-  //   setCurrentChat(chat);
-  // };
+  }, [currentChat]);
 
   const showCreateGroupModal = () => {
     setOpen(true);
