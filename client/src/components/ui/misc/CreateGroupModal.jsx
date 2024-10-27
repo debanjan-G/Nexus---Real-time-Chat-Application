@@ -106,9 +106,9 @@ export default function CreateGroupModal({ open, setOpen }) {
     setGroupMembers((prev) => [...prev, person]);
   };
 
-  const removeBadge = (userEmail) => {
+  const removeBadge = (userID) => {
     const updatedGroupMembers = groupMembers.filter(
-      (member) => member.email !== userEmail
+      (member) => member._id !== userID
     );
     setGroupMembers(updatedGroupMembers);
   };

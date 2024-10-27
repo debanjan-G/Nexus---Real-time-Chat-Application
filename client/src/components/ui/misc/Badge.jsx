@@ -11,7 +11,7 @@ const Badge = ({ user, removeBadge }) => {
         {user.username}
       </span>
       <IoMdClose
-        onClick={() => removeBadge(user.email)}
+        onClick={() => removeBadge(user._id)}
         className="hover:cursor-pointer rounded-full text-white bg-red-500"
       />
     </div>
