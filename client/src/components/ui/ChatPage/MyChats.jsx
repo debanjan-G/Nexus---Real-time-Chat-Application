@@ -9,6 +9,7 @@ import ChatCard from "../misc/ChatCard";
 import { IoAddOutline } from "react-icons/io5";
 import Spinner from "../Spinner";
 import CreateGroupModal from "../misc/CreateGroupModal";
+import { getSender } from "../../../helperFunctions/getSender";
 
 const MyChats = ({ user }) => {
   const { chats, setChats, currentChat, setCurrentChat } = ChatState();
@@ -51,14 +52,15 @@ const MyChats = ({ user }) => {
     fetchChats(); // fetching all chats of currently logged user
 
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo"))); // saving the details of the currently logged user
+    // setLoggedUser(user);
   }, []);
 
-  const fetchChat = async (user, chat) => {
-    console.log(`Fetching chat with ${user.username}`);
-    console.log("selected chat = ", chat);
+  // const fetchChat = async (user, chat) => {
+  //   console.log(`Fetching chat with ${user.username}`);
+  //   console.log("selected chat = ", chat);
 
-    setCurrentChat(chat);
-  };
+  //   setCurrentChat(chat);
+  // };
 
   const showCreateGroupModal = () => {
     setOpen(true);
@@ -82,12 +84,12 @@ const MyChats = ({ user }) => {
         <div onClick={() => setSelectedChat(chat)} className="" key={index}>
           <ChatCard
             chat={chat}
-            fetchChat={fetchChat}
+            // fetchChat={fetchChat}
             isSelected={selectedChat?._id === chat._id}
             chatName={
               chat.isGroupChat
                 ? chat.chatName
-                : chat.users.find((user) => user._id !== loggedUser.id).username
+                : getSender(loggedUser, chat.users).username
             }
             latestMessage={`Latest Message ${index + 1}`}
           />
@@ -99,10 +101,3 @@ const MyChats = ({ user }) => {
 };
 
 export default MyChats;
-
-// 1. MyChats heading
-// 2. New Group Chat  button
-//3. Current user label
-// 4. Individual Chat Component (card):
-// a. other user's name
-//b. Recent message + sender name

@@ -4,11 +4,18 @@ import axios from "axios";
 import { ChatState } from "../../context/ChatProvider";
 
 const ChatCard = ({ chatName, latestMessage, isSelected, fetchChat, chat }) => {
-  console.log("CHATNAME = ", chatName);
+  const { setCurrentChat } = ChatState();
+
+  const handleChatCardClick = () => {
+    // fetchChat(chatName, chat)
+    console.log("Setting current chat to ", chat);
+
+    setCurrentChat(chat);
+  };
 
   return (
     <div
-      onClick={() => fetchChat(chatName, chat)}
+      onClick={handleChatCardClick}
       className={`py-2 px-4 rounded-md 
     ${
       isSelected ? "bg-green-500 text-white" : "bg-slate-300 text-slate-800"

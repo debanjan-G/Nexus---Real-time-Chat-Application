@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { IoMdClose } from "react-icons/io";
 
 const Badge = ({ user, removeBadge }) => {
-  console.log("USERNAME = ", user.username);
+  //   console.log("USERNAME = ", user.username);
 
   return (
     <div className="flex justify-center rounded-md bg-blue-300 text-blue-900">
