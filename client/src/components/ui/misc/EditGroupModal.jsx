@@ -15,7 +15,7 @@ import SearchResultBox from "./SearchResultBox";
 
 const EditGroupModal = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
-  const { currentChat, setCurrentChat } = ChatState();
+  const { user, currentChat, setCurrentChat } = ChatState();
 
   // Add people to group states
   const [query, setQuery] = useState("");
@@ -53,6 +53,10 @@ const EditGroupModal = ({ open, setOpen }) => {
 
   // Function to remove users from group
   const removePeopleFromGroup = async (userID) => {
+    if (currentChat.groupAdmin._id !== user.id) {
+      notify("Only admins can add/remove people from the group");
+      return;
+    }
     try {
       const response = await axios.put(
         "http://localhost:8080/api/chat/group-remove-people",
@@ -78,11 +82,17 @@ const EditGroupModal = ({ open, setOpen }) => {
 
   // Function to add new people to the group
   const addPeopleToGroup = async (newUser) => {
+    if (currentChat.groupAdmin._id !== user.id) {
+      notify("Only admins can add/remove people from the group⚠️");
+      return;
+    }
+
     if (currentChat.users.find((user) => user._id === newUser._id)) {
       notify("User is already present in the group⚠️");
       return;
     }
 
+    // if (user)
     try {
       setLoading(true);
       const response = await axios.put(
