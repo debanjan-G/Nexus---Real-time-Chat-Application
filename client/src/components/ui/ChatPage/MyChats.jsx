@@ -14,7 +14,7 @@ import { getSender } from "../../../helperFunctions/getSender";
 const MyChats = ({ user }) => {
   const { chats, setChats, currentChat, setCurrentChat } = ChatState();
   const [loading, setLoading] = useState(false);
-  const [loggedUser, setLoggedUser] = useState();
+  // const [loggedUser, setLoggedUser] = useState();
   const [selectedChat, setSelectedChat] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -26,6 +26,9 @@ const MyChats = ({ user }) => {
   // const userId = localStorage.getItem("userId");
 
   useEffect(() => {
+    // setLoggedUser(JSON.parse(localStorage.getItem("userInfo"))); // saving the details of the currently logged user
+    // console.log(loggedUser);
+
     const fetchChats = async () => {
       setLoading(true);
       try {
@@ -51,7 +54,6 @@ const MyChats = ({ user }) => {
 
     fetchChats(); // fetching all chats of currently logged user
 
-    setLoggedUser(JSON.parse(localStorage.getItem("userInfo"))); // saving the details of the currently logged user
     // setLoggedUser(user);
   }, []);
 
@@ -89,7 +91,10 @@ const MyChats = ({ user }) => {
             chatName={
               chat.isGroupChat
                 ? chat.chatName
-                : getSender(loggedUser, chat.users).username
+                : getSender(
+                    JSON.parse(localStorage.getItem("userInfo")), // saving the details of the currently logged user
+                    chat.users
+                  ).username
             }
             latestMessage={`Latest Message ${index + 1}`}
           />
