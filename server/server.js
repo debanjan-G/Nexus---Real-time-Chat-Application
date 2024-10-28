@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
+import messageRoutes from "./routes/messageRoutes.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ connectDB();
 
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
 
 app.get("/", (req, res) => {
   res.json({ msg: "Welcome to Nexus API" });
