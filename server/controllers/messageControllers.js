@@ -2,7 +2,35 @@ import expressAsyncHandler from "express-async-handler";
 import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js";
 
-const getAllMessages = expressAsyncHandler(async (req, res) => {});
+const getAllMessages = expressAsyncHandler(async (req, res) => {
+  const { chatID } = req.params;
+
+  if (!chatID) {
+    return res
+      .status(400)
+      .json({ success: false, message: "chatID not provided!" });
+  }
+
+  const messages = await Message.find({ chat: chatID })
+    .populate("sender", "-password")
+    .populate({
+      path: "chat", // Populate the 'chat' field in 'Message'
+      populate: {
+        path: "users", // Populate the 'users' array inside 'chat'
+        select: "-password", // Optionally, exclude sensitive fields like 'password'
+      },
+    });
+
+  if (!messages) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No messages found!" });
+  }
+
+  res
+    .status(200)
+    .json({ success: true, messageCount: messages.length, messages });
+});
 
 // Controller to send a message
 const sendMessage = expressAsyncHandler(async (req, res) => {
