@@ -3,6 +3,8 @@ import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js";
 
 const getAllMessages = expressAsyncHandler(async (req, res) => {
+  console.log(req.params);
+
   const { chatID } = req.params;
 
   if (!chatID) {

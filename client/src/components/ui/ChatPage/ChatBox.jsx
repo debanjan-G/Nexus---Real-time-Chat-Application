@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ChatState } from "../../context/ChatProvider";
 import { LuEye } from "react-icons/lu";
 import ProfileModal from "../misc/ProfileModal";
-import SingleChatArea from "../misc/SingleChatArea";
+import SingleChatArea from "./SingleChatArea";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import EditGroupModal from "../misc/EditGroupModal";
 
@@ -74,7 +74,7 @@ const ChatBox = () => {
             </h1>
           </div>
         ) : (
-          <SingleChatArea />
+          <SingleChatArea otherUser={otherUser} />
         )}
       </div>
     </div>
