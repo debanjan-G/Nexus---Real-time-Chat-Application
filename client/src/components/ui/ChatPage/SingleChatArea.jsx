@@ -4,16 +4,15 @@ import { IoSend } from "react-icons/io5";
 import axios from "axios";
 import { ChatState } from "../../context/ChatProvider";
 import toast from "react-hot-toast";
+import ScrollableFeed from "react-scrollable-feed";
+import Tooltip from "../Tooltip";
 
 const SingleChatArea = ({ otherUser }) => {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { currentChat, setCurrentChat } = ChatState();
-
-  // console.log("Other User  =  ", otherUser);
-  // console.log("Current Chat  =  ", currentChat);
+  const { currentChat } = ChatState();
 
   const notify = (msg) => {
     toast(msg);
@@ -21,9 +20,10 @@ const SingleChatArea = ({ otherUser }) => {
 
   useEffect(() => {
     fetchMessages();
-  }, []);
+  }, [currentChat]);
 
   const fetchMessages = async () => {
+    if (!currentChat) return;
     try {
       setLoading(true);
       const response = await axios.get(
@@ -35,7 +35,7 @@ const SingleChatArea = ({ otherUser }) => {
         }
       );
 
-      console.log("Fetch Msg Response: ", response.data);
+      console.log("Fetched messages: ", response.data);
       setMessages(response.data.messages);
     } catch (error) {
       console.log("Error: ", error);
@@ -67,35 +67,53 @@ const SingleChatArea = ({ otherUser }) => {
       );
 
       console.log("Send Message API response: ", response.data);
-      setMessages((prev) => [...prev, newMessage]); //updating the messages state
+      setMessages((prev) => [
+        ...prev,
+        { content: messageToSend, sender: { _id: "yourUserId" } },
+      ]);
     } catch (error) {
       console.log("Error: ", error);
       notify("Failed to send message❌");
     } finally {
       setLoading(false);
-      notify("Message sent successfully✅");
+      fetchMessages();
     }
   };
 
   return (
     <div className="flex flex-col h-full bg-slate-300">
-      <div className="flex-1 overflow-y-auto flex flex-col-reverse p-2 ">
-        {/* This is where the chat messages will be displayed */}
-        {/* Example message display */}
-        {/* sender's messages */}
-        <div className="mb-2 flex flex-col items-end bg-pink-500 p-2 rounded-md max-w-fit ml-auto text-white  ">
-          Hi there!
-        </div>
-        {/* receiver's messages */}
-        <div className="mb-2 flex flex-col items-start bg-white p-2 rounded-md max-w-fit">
-          <div className="flex">
-            <span className="font-semibold inline mr-2">
-              {otherUser.username}:
-            </span>{" "}
-            Hello!
-          </div>
-        </div>
-        {/* Add more messages here */}
+      <div className="flex-1 overflow-y-auto flex flex-col-reverse p-2">
+        <ScrollableFeed>
+          {messages &&
+            messages.map((msg) => {
+              const isOtherUser = msg.sender._id === otherUser._id;
+              return (
+                <div
+                  key={msg._id}
+                  className={`mb-2 flex ${
+                    isOtherUser ? "flex-row" : "flex-row-reverse"
+                  }`}
+                >
+                  {isOtherUser && (
+                    <Tooltip message={otherUser.username}>
+                      <img
+                        className="object-cover rounded-full h-10 w-10 cursor-pointer mr-2"
+                        src={otherUser.avatar}
+                        alt="avatar"
+                      />
+                    </Tooltip>
+                  )}
+                  <div
+                    className={`max-w-[70%] flex items-center p-2 rounded-md ${
+                      isOtherUser ? "bg-white" : "bg-pink-500 text-white"
+                    }`}
+                  >
+                    <span className="break-words">{msg.content}</span>
+                  </div>
+                </div>
+              );
+            })}
+        </ScrollableFeed>
       </div>
       {loading && <Spinner />}
       <form
@@ -110,11 +128,8 @@ const SingleChatArea = ({ otherUser }) => {
           placeholder="Enter a message"
           required
         />
-        <button>
-          <IoSend
-            type="submit"
-            className="text-2xl hover:cursor-pointer hover:text-blue-800 duration-200"
-          />
+        <button type="submit">
+          <IoSend className="text-2xl hover:cursor-pointer hover:text-blue-800 duration-200" />
         </button>
       </form>
     </div>

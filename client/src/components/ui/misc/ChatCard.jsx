@@ -8,7 +8,7 @@ const ChatCard = ({ chatName, latestMessage, isSelected, fetchChat, chat }) => {
 
   const handleChatCardClick = () => {
     // fetchChat(chatName, chat)
-    console.log("Setting current chat to ", chat);
+    // console.log("Setting current chat to ", chat);
 
     setCurrentChat(chat);
   };

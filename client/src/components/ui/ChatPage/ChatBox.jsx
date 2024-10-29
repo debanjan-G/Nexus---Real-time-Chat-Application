@@ -27,7 +27,7 @@ const ChatBox = () => {
 
       setChatName(newChatName);
 
-      console.log("Chat Name = ", newChatName);
+      // console.log("Chat Name = ", newChatName);
     }
   }, [loggedInUser, currentChat]);
 
