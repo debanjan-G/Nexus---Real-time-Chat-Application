@@ -98,7 +98,7 @@ const SingleChatArea = ({ otherUser }) => {
       notify("Failed to send message❌");
     } finally {
       setLoading(false);
-      fetchMessages();
+      // fetchMessages(); //redundant fetch message
     }
   };
 
@@ -109,6 +109,7 @@ const SingleChatArea = ({ otherUser }) => {
           {messages &&
             messages.map((msg) => {
               const isOtherUser = msg.sender._id === otherUser._id;
+              console.log("current message in map = ", msg);
               return (
                 <div
                   key={msg._id}
