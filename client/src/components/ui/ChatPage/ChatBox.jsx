@@ -5,6 +5,7 @@ import ProfileModal from "../misc/ProfileModal";
 import SingleChatArea from "./SingleChatArea";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import EditGroupModal from "../misc/EditGroupModal";
+import GroupChatArea from "./GroupChatArea";
 
 const ChatBox = () => {
   const [otherUser, setOtherUser] = useState("");
@@ -12,7 +13,6 @@ const ChatBox = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showEditGroupModal, setShowEditGroupModal] = useState(false);
   const { user: loggedInUser, currentChat } = ChatState();
-  // const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (loggedInUser && currentChat) {
@@ -26,8 +26,6 @@ const ChatBox = () => {
         : foundUser?.username || "Unknown User";
 
       setChatName(newChatName);
-
-      // console.log("Chat Name = ", newChatName);
     }
   }, [loggedInUser, currentChat]);
 
@@ -73,6 +71,9 @@ const ChatBox = () => {
               Click on a user to start chatting
             </h1>
           </div>
+        ) : // Corrected rendering logic
+        currentChat.users.length > 2 ? (
+          <GroupChatArea />
         ) : (
           <SingleChatArea otherUser={otherUser} />
         )}
