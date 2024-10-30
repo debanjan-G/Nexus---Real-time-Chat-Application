@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import http from "http";
 
 const app = express();
 
@@ -39,8 +40,34 @@ app.get("/api/chats/:chatID", (req, res) => {
 
 app.use(errorHandler); //error-handling middleware
 
-const PORT = process.env.PORT || 8080;
+import { Server } from "socket.io";
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT"],
+    credentials: true,
+  },
+});
 
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 8080;
+io.on("connection", (socket) => {
+  console.log(`Client with ID ${socket.id} connected.`);
+
+  socket.on("join-room", (roomID) => {
+    socket.join(roomID);
+    console.log(`Client with ID ${socket.id} joined room ${roomID}`);
+
+    socket.on("send-message", (msg) => {
+      socket.to(roomID).emit("new-message", msg);
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`Client with ID ${socket.id} disconnected.`);
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server running on Port ${PORT}`);
 });

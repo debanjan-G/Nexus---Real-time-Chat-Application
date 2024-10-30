@@ -26,9 +26,6 @@ const MyChats = ({ user }) => {
   // const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    // setLoggedUser(JSON.parse(localStorage.getItem("userInfo"))); // saving the details of the currently logged user
-    // console.log(loggedUser);
-
     const fetchChats = async () => {
       setLoading(true);
       try {
@@ -41,13 +38,12 @@ const MyChats = ({ user }) => {
         // console.log("Fetched chats: ", response.data);
 
         setChats(response.data.chats);
-
-        // console.log("Chats = ", response.data);
+        console.log("Chats = ", response.data);
       } catch (error) {
         console.log("ERROR: ", error);
         notify("Oops! An error occured while fetching your chats.");
       } finally {
-        // notify("Chats fetched successfully✅");
+        notify("Chats fetched successfully✅");
         setLoading(false);
       }
     };

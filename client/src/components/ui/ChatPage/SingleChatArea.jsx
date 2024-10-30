@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Spinner from "../Spinner";
 import { IoSend } from "react-icons/io5";
 import axios from "axios";
@@ -6,6 +6,7 @@ import { ChatState } from "../../context/ChatProvider";
 import toast from "react-hot-toast";
 import ScrollableFeed from "react-scrollable-feed";
 import Tooltip from "../Tooltip";
+import { io } from "socket.io-client";
 
 const SingleChatArea = ({ otherUser }) => {
   const [messages, setMessages] = useState([]);
@@ -13,6 +14,22 @@ const SingleChatArea = ({ otherUser }) => {
   const [loading, setLoading] = useState(false);
 
   const { currentChat } = ChatState();
+
+  //socket.io-client config
+  const socket = useMemo(() => io("http://localhost:8080"), []);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to WS server.");
+    });
+
+    socket.on("new-message", (msg) => {
+      console.log("received message: ", msg);
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => socket.disconnect();
+  }, [socket]);
 
   const notify = (msg) => {
     toast(msg);
@@ -24,6 +41,9 @@ const SingleChatArea = ({ otherUser }) => {
 
   const fetchMessages = async () => {
     if (!currentChat) return;
+
+    socket.emit("join-room", currentChat._id);
+
     try {
       setLoading(true);
       const response = await axios.get(
@@ -67,10 +87,12 @@ const SingleChatArea = ({ otherUser }) => {
       );
 
       console.log("Send Message API response: ", response.data);
-      setMessages((prev) => [
-        ...prev,
-        { content: messageToSend, sender: { _id: "yourUserId" } },
-      ]);
+
+      const newMessageDoc = response.data.populatedMessage;
+      setMessages((prev) => [...prev, newMessageDoc]);
+
+      // emitting socket.io-client event
+      socket.emit("send-message", newMessageDoc);
     } catch (error) {
       console.log("Error: ", error);
       notify("Failed to send message❌");

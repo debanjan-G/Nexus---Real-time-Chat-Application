@@ -12,7 +12,7 @@ const protect = expressAsyncHandler(async (req, res, next) => {
     try {
       // Authorization: Bearer <your_token>
       token = req.headers.authorization.split(" ")[1];
-      console.log("TOKEN = ", token);
+      // console.log("TOKEN = ", token);
 
       if (!token) {
         res.status(401);

@@ -36,7 +36,7 @@ const getAllMessages = expressAsyncHandler(async (req, res) => {
 
 // Controller to send a message
 const sendMessage = expressAsyncHandler(async (req, res) => {
-  console.log("request body = ", req.body);
+  // console.log("request body = ", req.body);
   const { message, chatID } = req.body;
   const senderID = req.user._id;
 
