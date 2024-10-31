@@ -8,12 +8,18 @@ import toast from "react-hot-toast";
 import ScrollableFeed from "react-scrollable-feed";
 import Tooltip from "../Tooltip";
 import { io } from "socket.io-client";
+import TypingIndicator from "../misc/TypingIndicator";
 
 const SingleChatArea = ({ otherUser }) => {
+  //states
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showTyping, setShowTyping] = useState(false);
+  const [timeoutID, setTimeoutID] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
 
+  // context
   const { setChats, currentChat, setCurrentChat } = ChatState();
 
   //socket.io-client config
@@ -27,6 +33,13 @@ const SingleChatArea = ({ otherUser }) => {
     socket.on("new-message", (msg) => {
       console.log("received message: ", msg);
       setMessages((prev) => [...prev, msg]);
+    });
+
+    socket.on("typing", () => {
+      setShowTyping(true);
+    });
+    socket.on("no-typing", () => {
+      setShowTyping(false);
     });
 
     return () => socket.disconnect();
@@ -114,6 +127,30 @@ const SingleChatArea = ({ otherUser }) => {
     }
   };
 
+  const handleKeyDown = () => {
+    if (timeoutID) clearTimeout(timeoutID);
+    setIsTyping(true);
+    socket.emit("show-typing", currentChat._id);
+  };
+
+  const handleKeyUp = () => {
+    if (timeoutID) clearTimeout(timeoutID);
+
+    const timeoutId = setTimeout(() => {
+      setIsTyping(false);
+      socket.emit("hide-typing", currentChat._id);
+    }, 2000);
+
+    setTimeoutID(timeoutId);
+  };
+
+  // useEffect(() => {
+  //   if (isTyping) {
+  //     console.log("Emitting typing event");
+
+  //     socket.emit("show-typing", currentChat._id);
+  //   }
+  // }, [isTyping]);
   return (
     <div className="flex flex-col h-full bg-slate-300">
       <div className="flex-1 overflow-y-auto flex flex-col-reverse p-2">
@@ -137,6 +174,7 @@ const SingleChatArea = ({ otherUser }) => {
                       />
                     </Tooltip>
                   )}
+
                   <div
                     className={`max-w-[70%] flex items-center p-2 rounded-md ${
                       isOtherUser ? "bg-white" : "bg-pink-500 text-white"
@@ -150,11 +188,18 @@ const SingleChatArea = ({ otherUser }) => {
         </ScrollableFeed>
       </div>
       {loading && <Spinner />}
+      {showTyping && (
+        <span className="p-4">
+          <TypingIndicator />
+        </span>
+      )}
       <form
         onSubmit={handleMessageSend}
         className="p-2 flex gap-2 items-center"
       >
         <input
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           className="w-full p-2 rounded-md"

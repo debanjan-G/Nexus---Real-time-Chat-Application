@@ -8,47 +8,83 @@
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 25px;
-  margin:0 auto;
+  margin: 0 auto;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 4px solid;
   border-color: #fd0404 #f0e6e600;
   animation: l1 1s infinite;
 }
-@keyframes l1 {to{transform: rotate(.5turn)}}
 
-/* .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+@keyframes l1 {
   to {
-    transform: rotate(360deg);
+    transform: rotate(.5turn);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+.typing-indicator {
+  background-color: #E6E7ED;
+  width: 60px; /* Reduced width */
+  height: 30px; /* Reduced height */
+  border-radius: 50px;
+  padding: 5px; /* Reduced padding */
+  display: flex; /* Use flex for alignment */
+  justify-content: center; /* Center dots horizontally */
+  align-items: center; /* Center dots vertically */
+  margin: 0; /* Remove margin from the container */
+  position: relative;
+  animation: 2s bulge infinite ease-out;
+}
+
+.typing-indicator:before,
+.typing-indicator:after {
+  content: '';
+  position: absolute;
+  bottom: -1px; /* Adjust position for smaller size */
+  left: -1px; /* Adjust position for smaller size */
+  height: 4px; /* Reduced size */
+  width: 4px; /* Reduced size */
+  border-radius: 50%;
+  background-color: #E6E7ED;
+}
+
+.typing-indicator:after {
+  height: 4px; /* Reduced size */
+  width: 4px; /* Reduced size */
+  left: -5px; /* Adjust position for smaller size */
+  bottom: -5px; /* Adjust position for smaller size */
+}
+
+.typing-indicator span {
+  height: 8px; /* Reduced size */
+  width: 8px; /* Reduced size */
+  margin: 0 2px; /* Adjusted spacing */
+  background-color: #9E9EA1;
+  display: inline-block; /* Change to inline-block for smaller size */
+  border-radius: 50%;
+  opacity: 0.4;
+}
+
+.typing-indicator span:nth-of-type(1) {
+  animation: 1s blink infinite 0.3333s;
+}
+
+.typing-indicator span:nth-of-type(2) {
+  animation: 1s blink infinite 0.6666s;
+}
+
+.typing-indicator span:nth-of-type(3) {
+  animation: 1s blink infinite 0.9999s;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 1;
   }
 }
 
-.card {
-  padding: 2em;
+@keyframes bulge {
+  50% {
+    transform: scale(1.05);
+  }
 }
-
-.read-the-docs {
-  color: #888;
-} */

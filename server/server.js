@@ -63,6 +63,18 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("show-typing", (roomID) => {
+    console.log(`user with ${socket.id} is typing`);
+
+    socket.to(roomID).emit("typing");
+  });
+
+  socket.on("hide-typing", (roomID) => {
+    console.log(`user with ${socket.id} stopped typing`);
+
+    socket.to(roomID).emit("no-typing");
+  });
+
   socket.on("disconnect", () => {
     console.log(`Client with ID ${socket.id} disconnected.`);
   });
