@@ -188,6 +188,8 @@ const SingleChatArea = ({ otherUser }) => {
         </ScrollableFeed>
       </div>
       {loading && <Spinner />}
+
+      {/* Typing Indicator */}
       {showTyping && (
         <span className="p-4">
           <TypingIndicator />

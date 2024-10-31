@@ -63,6 +63,7 @@ io.on("connection", (socket) => {
     });
   });
 
+  // typing-indicator events
   socket.on("show-typing", (roomID) => {
     console.log(`user with ${socket.id} is typing`);
 
@@ -72,6 +73,15 @@ io.on("connection", (socket) => {
   socket.on("hide-typing", (roomID) => {
     console.log(`user with ${socket.id} stopped typing`);
 
+    socket.to(roomID).emit("no-typing");
+  });
+
+  socket.on("typing-in-group", ({ roomID, typer }) => {
+    console.log(`${typer} is typing`);
+    socket.to(roomID).emit("typing", typer);
+  });
+
+  socket.on("not-typing-in-group", (roomID) => {
     socket.to(roomID).emit("no-typing");
   });
 

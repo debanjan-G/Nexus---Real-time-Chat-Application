@@ -7,15 +7,22 @@ import ScrollableFeed from "react-scrollable-feed"; // Scrollable feed for messa
 import { ChatState } from "../../context/ChatProvider"; // Context for chat state
 import { IoSend } from "react-icons/io5";
 import Tooltip from "../Tooltip";
+import TypingIndicator from "../misc/TypingIndicator";
 
 const GroupChatArea = () => {
+  //states
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [timerID, setTimerID] = useState(null);
+  const [typer, setTyper] = useState("");
+
+  //context
   const { user, currentChat, setCurrentChat, setChats } = ChatState();
 
   // console.log("GroupChat component");
-  console.log("Current Chat  = ", currentChat);
+  // console.log("Current Chat  = ", currentChat);
 
   // Initialize socket.io client
   const socket = useMemo(() => io("http://localhost:8080"), []);
@@ -32,6 +39,18 @@ const GroupChatArea = () => {
         if (prev.some((m) => m._id === msg._id)) return prev; // Skip if duplicate
         return [...prev, msg];
       });
+    });
+
+    //typing indicator events
+
+    socket.on("typing", (typer) => {
+      setTyper(typer);
+      setIsTyping(true);
+    });
+
+    socket.on("no-typing", () => {
+      setTyper("");
+      setIsTyping(false);
     });
 
     return () => {
@@ -102,6 +121,24 @@ const GroupChatArea = () => {
     }
   };
 
+  const handleKeyDown = () => {
+    // console.log("USER = ", user);
+
+    if (timerID) clearTimeout(timerID);
+    socket.emit("typing-in-group", {
+      roomID: currentChat._id,
+      typer: user.name,
+    });
+  };
+  const handleKeyUp = () => {
+    if (timerID) clearTimeout(timerID);
+
+    const timerId = setTimeout(() => {
+      socket.emit("not-typing-in-group", currentChat._id);
+    }, 2000);
+    setTimerID(timerId);
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-300">
       <div className="flex-1 overflow-y-auto flex flex-col-reverse p-2">
@@ -141,11 +178,21 @@ const GroupChatArea = () => {
         </ScrollableFeed>
       </div>
       {loading && <Spinner />}
+
+      {/* Typing Indicator */}
+      {isTyping && (
+        <span className="p-4">
+          {typer} is typing
+          <TypingIndicator />
+        </span>
+      )}
       <form
         onSubmit={handleMessageSend}
         className="p-2 flex gap-2 items-center"
       >
         <input
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           className="w-full p-2 rounded-md"
