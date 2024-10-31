@@ -12,7 +12,7 @@ const GroupChatArea = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user, currentChat } = ChatState();
+  const { user, currentChat, setCurrentChat, setChats } = ChatState();
 
   console.log("GroupChat component");
 
@@ -71,6 +71,21 @@ const GroupChatArea = () => {
           },
         }
       );
+
+      // we are updating only the latestMessage field of the currentChat
+      const updatedChat = {
+        ...currentChat,
+        latestMessage: response.data.populatedMessage,
+      };
+      setCurrentChat(updatedChat);
+
+      // Update the chats array to set the latest message for the specific chat
+      setChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat._id === currentChat._id ? updatedChat : chat
+        )
+      );
+
       const newMessageDoc = response.data.populatedMessage;
       setMessages((prev) => [...prev, newMessageDoc]);
       socket.emit("send-message", newMessageDoc);

@@ -7,7 +7,6 @@ import {
   renameGroupChat,
   addPeopleToGroup,
   removePeopleFromGroup,
-  setLatestMessage,
 } from "../controllers/chatControllers.js";
 
 const router = express.Router();

@@ -114,4 +114,22 @@ const getUser = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export { registerUser, loginUser, getUser };
+const getUserInfoById = expressAsyncHandler(async (req, res) => {
+  const { userID } = req.params;
+
+  if (!userID) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User ID not provided" });
+  }
+
+  const user = await User.findById(userID).select("-password");
+
+  if (!user) {
+    return res.status(400).json({ success: false, message: "User Not Found" });
+  }
+
+  res.status(200).json({ success: true, user });
+});
+
+export { registerUser, loginUser, getUser, getUserInfoById };
