@@ -14,7 +14,8 @@ const GroupChatArea = () => {
   const [loading, setLoading] = useState(false);
   const { user, currentChat, setCurrentChat, setChats } = ChatState();
 
-  console.log("GroupChat component");
+  // console.log("GroupChat component");
+  console.log("Current Chat  = ", currentChat);
 
   // Initialize socket.io client
   const socket = useMemo(() => io("http://localhost:8080"), []);
@@ -24,12 +25,18 @@ const GroupChatArea = () => {
       console.log("Connected to WS server.");
     });
 
+    // Remove any existing listener before adding a new one
+    socket.removeAllListeners("new-message");
     socket.on("new-message", (msg) => {
-      console.log("Received message: ", msg);
-      setMessages((prev) => [...prev, msg]);
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === msg._id)) return prev; // Skip if duplicate
+        return [...prev, msg];
+      });
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.disconnect();
+    };
   }, [socket]);
 
   useEffect(() => {
