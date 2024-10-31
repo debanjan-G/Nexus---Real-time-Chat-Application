@@ -21,7 +21,7 @@ export default function ChatSidebar({ open, setOpen }) {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { setCurrentChat, setChats } = ChatState();
+  const { setCurrentChat, chats, setChats } = ChatState();
 
   const notify = (msg) => {
     toast(msg);
@@ -79,7 +79,11 @@ export default function ChatSidebar({ open, setOpen }) {
 
       // update context
       setCurrentChat(response.data);
-      setChats((prev) => [...prev, response.data]);
+      if (chats.length === 0) {
+        setChats([response.data]);
+      } else {
+        setChats((prev) => [...prev, response.data]);
+      }
     } catch (error) {
       notify("Could not create chat! Try again later.");
       console.log("ERROR: ", error);

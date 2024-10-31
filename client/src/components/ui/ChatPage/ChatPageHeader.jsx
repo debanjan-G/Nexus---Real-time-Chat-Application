@@ -13,6 +13,8 @@ import { IoSearch } from "react-icons/io5";
 const ChatPageHeader = ({ user, setOpen }) => {
   const [showModal, setShowModal] = React.useState(false);
 
+  console.log("USER = ", user);
+
   return (
     <div className="bg-white flex justify-between items-center shadow-lg  p-4 mb-4">
       <div className="flex items-center gap-2" onClick={() => setOpen(true)}>

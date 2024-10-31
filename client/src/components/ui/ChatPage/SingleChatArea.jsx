@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useMemo, useState } from "react";
 import Spinner from "../Spinner";
 import { IoSend } from "react-icons/io5";

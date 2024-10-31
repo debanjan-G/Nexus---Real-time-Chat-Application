@@ -18,7 +18,7 @@ const Signup = () => {
   // image uploading states
   const [loading, setLoading] = useState(false);
   const [picture, setPicture] = useState("");
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  // const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const notify = (msg) => {
     toast(msg);
@@ -36,10 +36,9 @@ const Signup = () => {
         "https://api.cloudinary.com/v1_1/doi1vdkhc/image/upload",
         formData
       );
-      // console.log("Cloudinary POST request response: ", response.data);
 
-      setUploadedImageUrl(response.data.secure_url); // Get the URL of the uploaded image
-      console.log("Uploaded image URL:", response.data.secure_url);
+      // console.log("Uploaded image URL:", response.data.secure_url);
+      return response.data.secure_url;
     } catch (error) {
       console.error("Error uploading image:", error);
     } finally {
@@ -48,26 +47,28 @@ const Signup = () => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       setLoading(true);
-      e.preventDefault();
-
-      // console.log(username, email, password, confirmPassword, picture);
-
       if (password !== confirmPassword) {
         notify("Passwords do not match. Please try again❌");
         return;
       }
 
-      if (picture) await uploadImage();
+      let uploadedImage = "";
+      if (picture) {
+        uploadedImage = await uploadImage();
+      }
 
       // console.log("image state before submitting the form: ", uploadedImageUrl);
+
+      console.log("uploadedImageUrl = ", uploadedImage);
 
       const userData = {
         name: username,
         email,
         password,
-        picture: uploadedImageUrl,
+        picture: uploadedImage,
       };
 
       const response = await axios.post(
