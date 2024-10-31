@@ -65,9 +65,12 @@ const ChatCard = ({ chatName, isSelected, chat }) => {
             <span className="font-semibold">{senderName}: </span>
           )
         )}
-        {chat._id === currentChat._id
+        {chat.latestMessage?.content?.substring(0, 10)}
+        {chat.latestMessage?.content?.length > 10 && "..."}
+
+        {/* {chat._id === currentChat._id
           ? currentChat.latestMessage?.content
-          : chat.latestMessage?.content}
+          : chat.latestMessage?.content} */}
       </p>
     </div>
   );
