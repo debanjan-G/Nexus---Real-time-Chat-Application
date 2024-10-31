@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import axios from "axios";
 import { ChatState } from "../../context/ChatProvider";
 
-const ChatCard = ({ chatName, latestMessage, isSelected, fetchChat, chat }) => {
-  const { setCurrentChat } = ChatState();
+const ChatCard = ({ chatName, isSelected, chat }) => {
+  const { user, currentChat, setCurrentChat } = ChatState();
+  console.log("Chat = ", chat);
+  // console.log("Current Chat = ", currentChat);
 
   const handleChatCardClick = () => {
-    // fetchChat(chatName, chat)
-    // console.log("Setting current chat to ", chat);
-
     setCurrentChat(chat);
   };
 
@@ -23,7 +22,14 @@ const ChatCard = ({ chatName, latestMessage, isSelected, fetchChat, chat }) => {
     hover:bg-sky-300 hover:cursor-pointer`}
     >
       <h1 className="text-xl font-semibold">{chatName}</h1>
-      <p className=" text-sm">{latestMessage}</p>
+      <p className=" text-sm">
+        {chat.latestMessage?.sender === user.id && (
+          <span className="font-semibold text-lg">You: </span>
+        )}
+        {chat._id === currentChat._id
+          ? currentChat.latestMessage?.content
+          : chat.latestMessage?.content}
+      </p>
     </div>
   );
 };

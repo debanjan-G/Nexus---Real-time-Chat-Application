@@ -14,7 +14,7 @@ const SingleChatArea = ({ otherUser }) => {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { currentChat } = ChatState();
+  const { setChats, currentChat, setCurrentChat } = ChatState();
 
   //socket.io-client config
   const socket = useMemo(() => io("http://localhost:8080"), []);
@@ -87,7 +87,19 @@ const SingleChatArea = ({ otherUser }) => {
         }
       );
 
-      console.log("Send Message API response: ", response.data);
+      // we are updating only the latestMessage field of the currentChat
+      const updatedChat = {
+        ...currentChat,
+        latestMessage: response.data.populatedMessage,
+      };
+      setCurrentChat(updatedChat);
+
+      // Update the chats array to set the latest message for the specific chat
+      setChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat._id === currentChat._id ? updatedChat : chat
+        )
+      );
 
       const newMessageDoc = response.data.populatedMessage;
       setMessages((prev) => [...prev, newMessageDoc]);
@@ -99,7 +111,6 @@ const SingleChatArea = ({ otherUser }) => {
       notify("Failed to send message❌");
     } finally {
       setLoading(false);
-      // fetchMessages(); //redundant fetch message
     }
   };
 
@@ -110,7 +121,6 @@ const SingleChatArea = ({ otherUser }) => {
           {messages &&
             messages.map((msg) => {
               const isOtherUser = msg.sender._id === otherUser._id;
-              console.log("current message in map = ", msg);
               return (
                 <div
                   key={msg._id}

@@ -27,16 +27,16 @@ app.get("/", (req, res) => {
   res.json({ msg: "Welcome to Nexus API" });
 });
 
-app.get("/api/chats", (req, res) => {
-  res.send(chats);
-});
+// app.get("/api/chats", (req, res) => {
+//   res.send(chats);
+// });
 
-app.get("/api/chats/:chatID", (req, res) => {
-  const { chatID } = req.params;
-  const requiredChat = chats.filter((chat) => chat._id === chatID);
+// app.get("/api/chats/:chatID", (req, res) => {
+//   const { chatID } = req.params;
+//   const requiredChat = chats.filter((chat) => chat._id === chatID);
 
-  res.send(requiredChat);
-});
+//   res.send(requiredChat);
+// });
 
 app.use(errorHandler); //error-handling middleware
 

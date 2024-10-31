@@ -5,6 +5,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 // import Spinner from "../ui/Spinner";
 import Spinner from "../ui/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   // signup form states
@@ -18,7 +19,8 @@ const Signup = () => {
   // image uploading states
   const [loading, setLoading] = useState(false);
   const [picture, setPicture] = useState("");
-  // const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+
+  const navigate = useNavigate();
 
   const notify = (msg) => {
     toast(msg);
@@ -38,6 +40,7 @@ const Signup = () => {
       );
 
       // console.log("Uploaded image URL:", response.data.secure_url);
+
       return response.data.secure_url;
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -77,6 +80,8 @@ const Signup = () => {
       );
       console.log(response.data);
       localStorage.setItem("token", response.data.token);
+      //saving current user details to localStorage
+      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
     } catch (error) {
       console.log("Error : ", error.message);
     } finally {
@@ -86,6 +91,7 @@ const Signup = () => {
       setPassword("");
       setConfirmPassword("");
       setPicture("");
+      navigate("/chats");
     }
   };
   return (

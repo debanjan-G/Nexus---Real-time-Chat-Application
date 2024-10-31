@@ -13,6 +13,8 @@ import { getSender } from "../../../helperFunctions/getSender";
 
 const MyChats = ({ user }) => {
   const { chats, setChats, currentChat, setCurrentChat } = ChatState();
+  // console.log("Current Chat = ", currentChat);
+
   const [loading, setLoading] = useState(false);
   // const [loggedUser, setLoggedUser] = useState();
   const [selectedChat, setSelectedChat] = useState("");
@@ -43,7 +45,6 @@ const MyChats = ({ user }) => {
         console.log("ERROR: ", error);
         notify("Oops! An error occured while fetching your chats.");
       } finally {
-        notify("Chats fetched successfully✅");
         setLoading(false);
       }
     };
@@ -73,7 +74,6 @@ const MyChats = ({ user }) => {
         <div onClick={() => setSelectedChat(chat)} className="" key={index}>
           <ChatCard
             chat={chat}
-            // fetchChat={fetchChat}
             isSelected={selectedChat?._id === chat._id}
             chatName={
               chat.isGroupChat
@@ -83,7 +83,6 @@ const MyChats = ({ user }) => {
                     chat.users
                   ).username
             }
-            latestMessage={`Latest Message ${index + 1}`}
           />
         </div>
       ))}
